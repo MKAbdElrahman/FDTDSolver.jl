@@ -1,5 +1,10 @@
 module FDTDSolver
 
-# Write your package code here.
+
+
+include("EnumeTypes.jl")
+include("YeeGrid.jl")
+
+
 
 end
