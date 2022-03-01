@@ -3,7 +3,7 @@ module FDTDSolver
 
 
 include("EnumeTypes.jl")
-include("YeeGrid.jl")
+include("Grid.jl")
 
 
 
