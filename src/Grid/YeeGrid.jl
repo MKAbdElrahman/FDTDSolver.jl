@@ -16,3 +16,5 @@ function YeeGrid{T}(nodes...) where T
 	refgrid = StructuredGrid(nodes...)
 	YeeGrid{T}(refgrid)
 end
+
+Base.size(yeegrid::YeeGrid) = (size(yeegrid.x),size(yeegrid.y),size(yeegrid.z))
