@@ -1,5 +1,3 @@
-
-
 struct YeeGrid{T,nD} 
 	x::StructuredGrid{nD}
 	y::StructuredGrid{nD}

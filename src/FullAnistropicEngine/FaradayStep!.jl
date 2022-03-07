@@ -1,45 +1,80 @@
-function FaradayStep!(b, e, m, cb; ref_grid)
-
-    (nx, ny, nz) = size(ref_grid)
-
-    for k = 1:nz-1
+function FaradayStep!(b, e, m, cb, nx, ny, nz)
+    @turbo for k = 1:nz-1
         for j = 1:ny-1
             for i = 1:nx-1
-                b.x[i, j, k] =
-                    b.x[i, j, k] + cb.x[i, j, k] * (e.z[i, j, k] - e.z[i, j+1, k] + e.y[i, j, k+1] - e.y[i, j, k]) - m.x[i, j, k]
-                b.y[i, j, k] =
-                    b.y[i, j, k] + cb.y[i, j, k] * (e.x[i, j, k] - e.x[i, j, k+1] + e.z[i+1, j, k] - e.z[i, j, k]) - m.y[i, j, k]
-                b.z[i, j, k] =
-                    b.z[i, j, k] + cb.z[i, j, k] * (e.y[i, j, k] - e.y[i+1, j, k] + e.x[i, j+1, k] - e.x[i, j, k]) -
-                    m.z[i, j, k]
+                b[i, j, k, 1] =
+                    b[i, j, k, 1] + cb[i, j, k, 1] * (e[i, j, k, 3] - e[i, j+1, k, 3] + e[i, j, k+1, 2] - e[i, j, k, 2]) - m[i, j, k, 1]
+                b[i, j, k, 2] =
+                    b[i, j, k, 2] + cb[i, j, k, 2] * (e[i, j, k, 1] - e[i, j, k+1, 1] + e[i+1, j, k, 3] - e[i, j, k, 3]) - m[i, j, k, 2]
+                b[i, j, k, 3] =
+                    b[i, j, k, 3] + cb[i, j, k, 3] * (e[i, j, k, 2] - e[i+1, j, k, 2] + e[i, j+1, k, 1] - e[i, j, k, 1]) - m[i, j, k, 3]
             end
         end
     end
-
-    for k = 1:nz-1
+    @turbo for k = 1:nz-1
         for j = 1:ny-1
             for i = nx:nx
-                b.x[i, j, k] =
-                    b.x[i, j, k] + cb.x[i, j, k] * (e.z[i, j, k] - e.z[i, j+1, k] + e.y[i, j, k+1] - e.y[i, j, k]) - m.x[i, j, k]
+                b[i, j, k, 1] =
+                    b[i, j, k, 1] + cb[i, j, k, 1] * (e[i, j, k, 3] - e[i, j+1, k, 3] + e[i, j, k+1, 2] - e[i, j, k, 2]) - m[i, j, k, 1]
             end
         end
     end
-    for k = 1:nz-1
+    @turbo for k = 1:nz-1
         for j = ny:ny
             for i = 1:nx-1
-                b.y[i, j, k] =
-                    b.y[i, j, k] + cb.y[i, j, k] * (e.x[i, j, k] - e.x[i, j, k+1] + e.z[i+1, j, k] - e.z[i, j, k]) - m.y[i, j, k]
+                b[i, j, k, 2] =
+                    b[i, j, k, 2] + cb[i, j, k, 2] * (e[i, j, k, 1] - e[i, j, k+1, 1] + e[i+1, j, k, 3] - e[i, j, k, 3]) - m[i, j, k, 2]
             end
         end
     end
-    for k = nz:nz
+    @turbo for k = nz:nz
         for j = 1:ny-1
             for i = 1:nx-1
-                b.z[i, j, k] =
-                    b.z[i, j, k] + cb.z[i, j, k] * (e.y[i, j, k] - e.y[i+1, j, k] + e.x[i, j+1, k] - e.x[i, j, k]) -
-                    m.z[i, j, k]
+                b[i, j, k, 3] =
+                    b[i, j, k, 3] + cb[i, j, k, 3] * (e[i, j, k, 2] - e[i+1, j, k, 2] + e[i, j+1, k, 1] - e[i, j, k, 1]) - m[i, j, k, 3]
             end
         end
     end
+end
 
+
+
+            #    ex hx ey hy ez hz 
+function FaradayStep!(f, m, cb, nx, ny, nz)
+    @turbo for k = 1:nz-1
+        for j = 1:ny-1
+            for i = 1:nx-1
+                f[i, j, k, 2] =
+                    f[i, j, k, 2] + cb[i, j, k, 1] * (f[i, j, k, 5] - f[i, j+1, k, 5] + f[i, j, k+1, 3] - f[i, j, k, 3]) - m[i, j, k, 1]
+                f[i, j, k, 4] =
+                    f[i, j, k, 4] + cb[i, j, k, 2] * (f[i, j, k, 1] - f[i, j, k+1, 1] + f[i+1, j, k, 5] - f[i, j, k, 5]) - m[i, j, k, 2]
+                f[i, j, k, 6] =
+                    f[i, j, k, 6] + cb[i, j, k, 3] * (f[i, j, k, 3] - f[i+1, j, k, 3] + f[i, j+1, k, 1] - f[i, j, k, 1]) - m[i, j, k, 3]
+            end
+        end
+    end
+    @turbo for k = 1:nz-1
+        for j = 1:ny-1
+            for i = nx:nx
+                f[i, j, k, 4] =
+                f[i, j, k, 4] + cb[i, j, k, 1] * (f[i, j, k, 3] - f[i, j+1, k, 3] + f[i, j, k+1, 2] - f[i, j, k, 2]) - m[i, j, k, 1]
+            end
+        end
+    end
+    @turbo for k = 1:nz-1
+        for j = ny:ny
+            for i = 1:nx-1
+                f[i, j, k, 5] =
+                f[i, j, k, 5] + cb[i, j, k, 2] * (f[i, j, k, 1] - f[i, j, k+1, 1] + f[i+1, j, k, 3] - f[i, j, k, 3]) - m[i, j, k, 2]     
+            end
+        end
+    end
+    @turbo for k = nz:nz
+        for j = 1:ny-1
+            for i = 1:nx-1
+                f[i, j, k, 6] =
+                f[i, j, k, 6] + cb[i, j, k, 3] * (f[i, j, k, 2] - f[i+1, j, k, 2] + f[i, j+1, k, 1] - f[i, j, k, 1]) - m[i, j, k, 3]
+            end
+        end
+    end
 end

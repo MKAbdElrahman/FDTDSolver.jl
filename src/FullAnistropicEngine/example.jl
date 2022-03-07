@@ -1,30 +1,61 @@
-ref_grid = StructuredGrid(LinRange(-5, 5, 30), LinRange(-5, 7, 10), LinRange(-5, 1, 100))
+using Revise
+using FDTDSolver
+using LoopVectorization
+using BenchmarkTools
+using GFlops
+using LinuxPerf
+using LIKWID
 
-e = VectorField{Float64}(YeeGrid{Primal}(ref_grid))
-d = VectorField{Float64}(YeeGrid{Primal}(ref_grid))
-ϵ = TensorField{Float64}(YeeGrid{Primal}(ref_grid))
+ref_grid = StructuredGrid(LinRange(-20, 15, 10), LinRange(-5, 17, 10), LinRange(-5, 1, 10))
 
-b = VectorField{Float64}(YeeGrid{Dual}(ref_grid))
-h = VectorField{Float64}(YeeGrid{Dual}(ref_grid))
-μ = TensorField{Float64}(YeeGrid{Dual}(ref_grid))
-
-j = VectorField{Float64}(YeeGrid{Primal}(ref_grid))
-σₑ = TensorField{Float64}(YeeGrid{Primal}(ref_grid))
-
-m = VectorField{Float64}(YeeGrid{Dual}(ref_grid))
-σₘ = TensorField{Float64}(YeeGrid{Dual}(ref_grid))
-
-cf = VectorField{Float64}(YeeGrid{Dual}(ref_grid))
-ca = VectorField{Float64}(YeeGrid{Primal}(ref_grid))
+nx, ny, nz = size(ref_grid)
 
 
-FaradayStep!(b, e, m, cf, ref_grid = ref_grid)
+e =  rand(nx, ny, nz, 3)
+d = rand(nx, ny, nz, 3)
+ϵ =  rand(nx, ny, nz, 3)
+b =  rand(nx, ny, nz, 3)
+h = rand(nx, ny, nz, 3)
+μ =  rand(nx, ny, nz, 3)
 
-_update_dual_constitutive!(h, b, μ, size(ref_grid)...)
-_update_dual_constitutive!(m, h, σₘ, size(ref_grid)...)
+j = rand(nx, ny, nz, 3)
+σₑ =  rand(nx, ny, nz, 3)
+
+m =  rand(nx, ny, nz, 3)
+σₘ =  rand(nx, ny, nz, 3)
+
+cf =  rand(nx, ny, nz, 3)
+ca =  rand(nx, ny, nz, 3)
+
+f = rand(nx, ny, nz, 6)
 
 
-AmpereStep!(d, h, j, ca, ref_grid = ref_grid)
+function f()
+FaradayStep!(b, e, m, cf, nx, ny, nz)
+ #_update_dual_constitutive!(h, b, μ, nx, ny, nz)
+ #_update_dual_constitutive!(m, h, σₘ, nx, ny, nz)
+ # AmpereStep!(d, h, j, ca, nx, ny, nz)
+##_update_primal_constitutive!(j, e, σₑ, nx, ny, nz)
+end
 
-_update_primal_constitutive!(e, d, ϵ, size(ref_grid)...)
-_update_primal_constitutive!(j, e, σₑ, size(ref_grid)...)
+@btime f()
+#=
+
+cpu = 0 # starts with zero!
+LIKWID.PerfMon.init(cpu)
+groupid = LIKWID.PerfMon.add_event_set("FLOPS_DP")
+LIKWID.PerfMon.setup_counters(groupid)
+
+LIKWID.PerfMon.start_counters()
+
+FaradayStep!(b, e, m,cf, nx, ny, nz)
+
+LIKWID.PerfMon.stop_counters()
+
+mdict = LIKWID.PerfMon.get_metric_results(groupid, cpu)
+display(mdict)
+println(); flush(stdout);
+edict = LIKWID.PerfMon.get_event_results(groupid, cpu)
+display(edict)
+LIKWID.PerfMon.finalize()
+=#
