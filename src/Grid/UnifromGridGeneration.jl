@@ -1,16 +1,16 @@
 """
-    function optimal_cell_size(Δ_min::Real, Δ_max::Real, x_c::Vector; n_particles::Int = 100, p_norm::Int = Inf)
+    optimal_cell_size(Δ_min, Δ_max, x_c; n_particles = 100, p_norm = Inf)
 
 Uses particle swarm optimization to return a cell size in the range
-[Δ_min,Δ_max] such that the nodes `x_c` are integer multiples of the found cell size.
+[Δ_min,Δ_max] such that the nodes `x_c` are nearly integer multiples of the optimized cell size.
 
 # Arguments
-- `Δ_min`: minimum cell size
-- `Δ_max`: maximum cell size
-- `x_c`: constraint node coordinates
-- `n_particles`: number of particles in the swarm (default: 100)
-- `p_norm`: norm used to calculate the misfit objective function (default: `Inf`)
-- `range`: set `true` to return a `LinRange` instead  of cell spacing.
+- `Δ_min::Float64`: minimum cell size
+- `Δ_max::Float64`: maximum cell size
+- `x_c::Vector{Float64}`: constraint node coordinates
+- `n_particles::Int`: number of particles in the swarm (default: 100)
+- `p_norm::Int`: norm used to calculate the misfit objective function (default: `Inf`)
+- `range::Bool`: set `true` to return a `LinRange` instead  of cell spacing.
 
 # Examples
 ```julia-repl
