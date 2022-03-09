@@ -21,8 +21,7 @@ julia> optimal_cell_size(0.1,.3,[-1,-.5,1,1.25,2])
 ```
 # References
 The details of the algorithm are described in:
-"Structured Mesh Generation: Open-source automatic nonuniform mesh generation for FDTD simulation."
-link to the paper: https://ieeexplore.ieee.org/document/7458133
+[Structured Mesh Generation: Open-source automatic nonuniform mesh generation for FDTD simulation](https://ieeexplore.ieee.org/document/7458133)
 """
 function optimal_cell_size(Δ_min, Δ_max, x_c; n_particles = 100, p_norm = Inf,range = false)
     x0 = min(x_c...)
