@@ -4,9 +4,9 @@
 end
 function (pulse::BlackmanHarrisPulse)(t)
 	a0 = 0.353222222
-	a1 = −0.488
+	a1 = -0.488
 	a2 = 0.145
-	a3 = −0.010222222
+	a3 = -0.010222222
 	T = 1 / pulse.half_bandwidth
 	 if 0 ≤ t ≤ T
 	 return (a0 + a1 * cos((2π*t)/T) + a2 * cos((2π*2*t)/T) +  a3 * cos((2π*3*t)/T)) * cos(2π*pulse.fc*(t)) 
@@ -20,9 +20,9 @@ end
 end	
 function (pulse::DBlackmanHarrisPulse)(t)
 	a0 = 0.353222222
-	a1 = −0.488
+	a1 = -0.488
 	a2 = 0.145
-	a3 = −0.010222222
+	a3 = -0.010222222
 	T = 1 / pulse.half_bandwidth
 	 if 0 ≤ t ≤ T
 	 return -( a1 * sin((2π*t)/T) + a2 * sin((2π*2*t)/T) +  a3 * sin((2π*3*t)/T)) * cos(2π*pulse.fc*(t)) 
