@@ -1,5 +1,5 @@
 """
-function optimal_cell_size(Δ_min, Δ_max, x_c; n_particles = 100, p_norm = Inf)
+    function optimal_cell_size(Δ_min::Real, Δ_max::Real, x_c::Vector; n_particles::Int = 100, p_norm::Int = Inf)
 
 Uses particle swarm optimization to return a cell size in the range
 [Δ_min,Δ_max] such that the nodes `x_c` are integer multiples of the found cell size.
@@ -18,21 +18,10 @@ Uses particle swarm optimization to return a cell size in the range
 
 # Examples
 ```julia-repl
-julia> Δ_max = 0.4;
-
-julia> Δ_min = 0.1;
-
-julia> x_c = [-.75,-.35,.6,.1]
-4-element Vector{Float64}:
- -0.75
- -0.35
-  0.6
-  0.1
-
-julia> optimal_cell_size(Δ_min,Δ_max,x_c)
-[ Info: finding optimal spacing...
-[ Info: optimal step found 0.12272727272727274 with loss = 0.17647058823529416
-0.12272727272727274
+julia> optimal_cell_size(0.1,.3,[-1,-.5,1,1.25,2])
+[ Info: finding optimal cell size...
+[ Info: optimal cell size found is 0.125 with loss = 0.0
+0.125
 ```
 ...
 # Details
@@ -49,8 +38,8 @@ function optimal_cell_size(Δ_min, Δ_max, x_c; n_particles = 100, p_norm = Inf,
 
     M_initial = M_max
     objective(M) = norm(abs.(M[1] / Lx * x_c - round.(M[1] / Lx * x_c)), p_norm)
-    @info "finding optimal spacing..."
+    @info "finding optimal cell size..."
     op = optimize(objective, [M_initial], ParticleSwarm(; lower = [M_min], upper = [M_max], n_particles = n_particles))
-    @info "optimal step found is $(Lx/round.(Int,op.minimizer[1])) with loss = $(op.minimum)"
+    @info "optimal cell size found is $(Lx/round.(Int,op.minimizer[1])) with loss = $(op.minimum)"
     return range ? LinRange(x0,xL,round.(Int, op.minimizer[1] + 1))  :  Lx / round.(Int, op.minimizer[1])
 end
