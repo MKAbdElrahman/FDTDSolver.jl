@@ -4,17 +4,13 @@
 Uses particle swarm optimization to return a cell size in the range
 [Δ_min,Δ_max] such that the nodes `x_c` are integer multiples of the found cell size.
 
-
-...
 # Arguments
 - `Δ_min`: minimum cell size
 - `Δ_max`: maximum cell size
 - `x_c`: constraint node coordinates
 - `n_particles`: number of particles in the swarm (default: 100)
-- `p_norm`: norm used to calculate the misfit objective function (default: Inf)
-- `range`: set true to return a `LinRange` instead  of cell spacing.
-...
-
+- `p_norm`: norm used to calculate the misfit objective function (default: `Inf`)
+- `range`: set `true` to return a `LinRange` instead  of cell spacing.
 
 # Examples
 ```julia-repl
@@ -23,8 +19,7 @@ julia> optimal_cell_size(0.1,.3,[-1,-.5,1,1.25,2])
 [ Info: optimal cell size found is 0.125 with loss = 0.0
 0.125
 ```
-...
-# Details
+# References
 The details of the algorithm are described in:
 "Structured Mesh Generation: Open-source automatic nonuniform mesh generation for FDTD simulation."
 link to the paper: https://ieeexplore.ieee.org/document/7458133
