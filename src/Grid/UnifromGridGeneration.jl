@@ -29,11 +29,10 @@ function optimal_cell_size(Δ_min, Δ_max, x_c; n_particles = 100, p_norm = Inf,
     xL = max(x_c...)
     Lx = xL - x0
     M_min = Lx / Δ_max
-    M_max = Lx / Δ_min
-
-    M_initial = 0.5*(M_max + M_min)
+    M_max = Lx / Δ_min    
     objective(M) = norm(M[1] / Lx * x_c - round.(M[1] / Lx * x_c), p_norm)
     @info "finding optimal cell size..."
+    M_initial = 0.5*(M_max + M_min)
     op = optimize(objective, [M_initial], ParticleSwarm(; lower = [M_min], upper = [M_max], n_particles = n_particles))
     @info "optimal cell size found is $(Lx/round.(Int,op.minimizer[1])) with loss = $(op.minimum)"
     return range ? LinRange(x0,xL,round.(Int, op.minimizer[1] + 1))  :  Lx / round.(Int, op.minimizer[1])
